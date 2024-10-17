@@ -10,7 +10,7 @@ server :
 
 run-server: server
 	./chat_server/a.out
-	
+
 
 clean:
-	rm -f chat_client/a.out chat_server/a.out
+	rm chat_client/a.out chat_server/a.out
