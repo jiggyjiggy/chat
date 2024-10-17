@@ -6,7 +6,7 @@ run-client : client
 
 
 server : 
-	clang++ chat_server/*.cpp -o chat_server/a.out
+	clang++ -I ./chat_server ./chat_server/*.cpp ./chat_server/command/*.cpp
 
 run-server: server
 	./chat_server/a.out
