@@ -25,7 +25,7 @@ void ReadHandler::run()
 			break;
 		}
 
-		std::cout << "Received: " << buffer << std::endl;
+		std::cout << "Received: " << std::string(buffer, bytesReceived) << std::endl;
 	}
 	std::cout << "ReadHandler::run() 종료" << std::endl;
 }
