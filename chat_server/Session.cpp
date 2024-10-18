@@ -12,7 +12,7 @@ Session::Session(int socketFd, CommandManager& commandManager, SessionManager& s
 	, mSessionManager(&sessionManager)
 	, mbClosed(false)
 {
-	mSessionManager->add(*this);
+	mSessionManager->add(this);
 }
 
 Session::~Session()

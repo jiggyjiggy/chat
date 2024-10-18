@@ -12,14 +12,14 @@ class SessionManager
 {
 public:	
 
-	void add(const Session& session);
+	void add(Session* session);
 	void remove(const Session& session);
 	void closeAll();
 	void sendAll(const std::string& message) const;
 	std::vector<std::string> getAllUsername() const;
 
 private:
-	std::vector<Session> mSessions;
+	std::vector<Session*> mSessions;
 	mutable std::mutex mMutex;
 };
 
