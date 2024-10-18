@@ -6,6 +6,8 @@
 #include <sys/socket.h>
 #include <thread>
 
+#include <cstring>
+
 Session::Session(int socketFd, CommandManager& commandManager, SessionManager& sessionManager)
 	: mSocketFd(socketFd)
 	, mCommandManager(&commandManager)

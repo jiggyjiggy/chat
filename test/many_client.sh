@@ -21,7 +21,7 @@ sleep 5
 #     클라이언트
 # ----------------- #
 PIDS_CLIENT=()  # 클라이언트 PID를 저장할 배열
-count=1024
+count=50
 for ((i = 1; i <= count; i++)); 
 do
 	echo "Client 접속 요청 : $i / $count"
