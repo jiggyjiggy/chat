@@ -1,6 +1,6 @@
 #include "WriteHandler.h"
 #include "Client.h"
-#include "MyRsa.h"
+#include "MyRSA.h"
 #include <iostream>
 #include <unistd.h>
 

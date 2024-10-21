@@ -17,18 +17,20 @@ Session::Session(int socketFd, CommandManager& commandManager, SessionManager& s
 	, mSessionManager(&sessionManager)
 	, mbClosed(false)
 {
-    if(recv(socketFd, pem_key, pem_len, 0) == -1)
+	char client_pubkey_buffer[4096];
+	int received = recv(mSocketFd, client_pubkey_buffer, sizeof(client_pubkey_buffer), 0);
+    if (received < 0)
     {
         perror("recv");
     }
-    // 서버의 MyRsa 공개 키 불러오기i
-    string client_Pubkey = string(socketFd) + "_public.pem"
-    FILE* pub_file = fopen(client_Pubkey, "w");
+    // 클라이언트의 MyRsa 공개 키 불러오기
+	std::string client_Pubkey = std::to_string(mSocketFd) + "_public.pem";
+    FILE* pub_file = fopen(client_Pubkey.c_str(), "w");
     size_t written = fwrite(client_pubkey_buffer, 1, received, pub_file);
     EVP_PKEY* client_pub_key = PEM_read_PUBKEY(pub_file, NULL, NULL, NULL);
 
 	mSessionManager->add(this);
-
+}
 
 Session::~Session()
 {
@@ -96,7 +98,7 @@ void Session::send(const std::string& message)
     std::cout << "mSocketFd:  " << mSocketFd << std::endl;
 
     // 서버의 공개키를 이용해 메시지를 암호화할 MyRSA 객체 생성
-    string client_Pubkey = string(socketFd) + "_public.pem"
+	std::string client_Pubkey = std::to_string(mSocketFd) + "_public.pem";
 	MyRSA rsa(client_Pubkey);
 
 	// 암호화된 메시지를 저장할 버퍼
@@ -107,7 +109,7 @@ void Session::send(const std::string& message)
 	rsa.encrypt((unsigned char*)message.c_str(), encrypted, encrypted_len);
 
 	// 암호화된 메시지를 서버로 전송
-    if (::send(mSocketFd, encrypted, encrypted_len), 0) == -1) 
+    if (::send(mSocketFd, encrypted, encrypted_len, 0) == -1) 
 	{
         throw std::runtime_error("Error sending message");
     }
