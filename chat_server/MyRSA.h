@@ -5,9 +5,15 @@
 #include <openssl/pem.h>
 #include <string>
 
+enum KEY_TYPE
+{
+	PUBLIC_KEY,
+	PRIVATE_KEY
+};
+
 class MyRSA {
 public:
-    MyRSA(const std::string& public_key_file);
+	MyRSA(const std::string& key_file, KEY_TYPE key_type);
     ~MyRSA();
 
     // 암호화 및 복호화

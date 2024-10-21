@@ -64,7 +64,7 @@ void Session::run()
 			std::string received(buffer, bytesReceived);
 			std::cout << "client -> server: " << received << ", 소켓 FD: " << mSocketFd << std::endl;
 
-            MyRSA rsa("private.pem");  // 클라이언트의 개인키를 로드
+            MyRSA rsa("private.pem", PRIVATE_KEY);  // 클라이언트의 개인키를 로드
 			// 암호화된 데이터를 복호화할 버퍼
             unsigned char decrypted[1024];  
             size_t decrypted_len = 0;
@@ -99,7 +99,7 @@ void Session::send(const std::string& message)
 
     // 서버의 공개키를 이용해 메시지를 암호화할 MyRSA 객체 생성
 	std::string client_Pubkey = std::to_string(mSocketFd) + "_public.pem";
-	MyRSA rsa(client_Pubkey);
+	MyRSA rsa(client_Pubkey, PUBLIC_KEY);
 
 	// 암호화된 메시지를 저장할 버퍼
 	unsigned char encrypted[256];  

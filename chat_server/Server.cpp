@@ -3,7 +3,7 @@
 #include "SessionManager.h"
 #include "Session.h"
 
-#include "CipherManager.h"
+#include "MyRSA.h"
 
 #include <iostream>
 #include <arpa/inet.h>
@@ -62,8 +62,8 @@ void Server::start() {
 
 void Server::running() {
 
-    EVP_PKEY* keypair = CipherManager::create_RSA_keypair();
-    CipherManager::save_keys(keypair);
+    EVP_PKEY* keypair = MyRSA::create_RSA_keypair();
+    MyRSA::save_keys(keypair);
 
 	// 서버의 공개키를 클라이언트에 전송
 	FILE* pub_file_server = fopen("public.pem", "r");

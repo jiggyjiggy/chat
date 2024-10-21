@@ -15,9 +15,10 @@ ReadHandler::ReadHandler(int socketFd, Client& client)
 void ReadHandler::run()
 {
 	// 클라이언트의 개인키를 사용해 복호화할 MyRSA 객체 생성
-	MyRSA rsa("private.pem");  // 클라이언트의 개인키
-
-	char buffer[1024];
+	MyRSA rsa("private.pem", PRIVATE_KEY);  // 클라이언트의 개인키
+	std::cout << "after MyRSA rsa(private.pem);" << std::endl;
+	
+ 	char buffer[1024];
 	while (mbClosed == false)
 	{
 		std::cout << "ReadHandler::run() mSocketFd : " << mSocketFd << std::endl;

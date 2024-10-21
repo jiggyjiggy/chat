@@ -109,7 +109,7 @@ void Client::start()
 	delete[] client_pubkey_buffer;
 
 
-
+sleep(1);
 
 
 
