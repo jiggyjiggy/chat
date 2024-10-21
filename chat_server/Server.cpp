@@ -96,7 +96,7 @@ void Server::running() {
         std::cout << "클라이언트 IP: " << clientIP << ", 소켓 연결: " << socketFd << std::endl;
 
         // 클라이언트에게 공개 키 전송
-        if (send(mServerSocketFd, pem_key, pem_len, 0) == -1) {
+        if (send(socketFd, pem_key, pem_len, 0) == -1) {
             perror("send");
         }
 
