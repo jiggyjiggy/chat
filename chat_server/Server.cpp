@@ -62,24 +62,23 @@ void Server::start() {
 
 void Server::running() {
 
-    unsigned char encrypted[256];
-    unsigned char decrypted[256];
-    size_t encrypted_len = 0, decrypted_len = 0;
-
     EVP_PKEY* keypair = CipherManager::create_RSA_keypair();
-
     CipherManager::save_keys(keypair);
 
-    // 공개 키를 PEM 형식으로 직렬화
-    BIO* bio = BIO_new(BIO_s_mem());
-    PEM_write_bio_PUBKEY(bio, keypair);
+	// 서버의 공개키를 클라이언트에 전송
+	FILE* pub_file_server = fopen("public.pem", "r");
+	if (!pub_file_server) {
+		std::cerr << "서버 공개키 파일 열기 실패" << std::endl;
+		return;
+	}
+	fseek(pub_file_server, 0, SEEK_END);
+	long pub_key_size = ftell(pub_file_server);
+	rewind(pub_file_server);
 
-    // PEM 데이터를 메모리에 저장
-    char* pem_key = nullptr;
-    long pem_len = BIO_get_mem_data(bio, &pem_key);
+	char* server_pubkey_buffer = new char[pub_key_size];
+	fread(server_pubkey_buffer, 1, pub_key_size, pub_file_server);
+	fclose(pub_file_server);
 
-    // 자원 해제
-    BIO_free(bio);
 
     while (true) {
 		sockaddr_in clientAddr{};
@@ -95,10 +94,14 @@ void Server::running() {
         inet_ntop(AF_INET, &clientAddr.sin_addr, clientIP, sizeof(clientIP));
         std::cout << "클라이언트 IP: " << clientIP << ", 소켓 연결: " << socketFd << std::endl;
 
-        // 클라이언트에게 공개 키 전송
-        if (send(socketFd, pem_key, pem_len, 0) == -1) {
-            perror("send");
+        if (send(socketFd, server_pubkey_buffer, pub_key_size, 0) < 0) {
+            std::cerr << "서버 공개키 전송 실패" << std::endl;
+            delete[] server_pubkey_buffer;
+            return;
         }
+        std::cout << "서버 공개키 전송 성공" << std::endl;
+
+            delete[] server_pubkey_buffer;
 
 		Session* session = new Session(socketFd, mCommandManager, mSessionManager);
 

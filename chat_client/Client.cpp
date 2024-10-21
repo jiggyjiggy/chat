@@ -57,6 +57,9 @@ void Client::start()
 	// 서버의 공개키 받기, 파일로 저장(server_public.pem)
 	char server_pubkey_buffer[4096];
     int received = recv(mSocketFd, server_pubkey_buffer, sizeof(server_pubkey_buffer), 0);
+
+	std::cout << received << std::endl;
+
     if (received < 0)
     {
         std::cerr << "서버 공개키 수신 실패" << std::endl;

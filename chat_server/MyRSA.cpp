@@ -1,5 +1,6 @@
 #include "MyRSA.h"
 #include <openssl/err.h>
+#include <stdexcept>
 
 MyRSA::MyRSA(const std::string& public_key_file) {
     FILE* pub_file = fopen(public_key_file.c_str(), "r");

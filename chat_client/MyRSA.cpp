@@ -1,5 +1,6 @@
 #include "MyRSA.h"
 #include <openssl/err.h>
+#include <stdexcept>
 
 MyRSA::MyRSA(const std::string& public_key_file) {
     FILE* pub_file = fopen(public_key_file.c_str(), "r");
@@ -9,6 +10,8 @@ MyRSA::MyRSA(const std::string& public_key_file) {
     mRsaKey = PEM_read_PUBKEY(pub_file, NULL, NULL, NULL);
     fclose(pub_file);
     if (!mRsaKey) {
+        throw std::runtime_error("Unable to read public key");
+        ERR_print_errors_fp(stderr); // OpenSSL 오류 출력
         throw std::runtime_error("Unable to read public key");
     }
 }
