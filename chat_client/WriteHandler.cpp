@@ -1,5 +1,6 @@
 #include "WriteHandler.h"
 #include "Client.h"
+#include "MyRsa.h"
 #include <iostream>
 #include <unistd.h>
 
@@ -62,7 +63,18 @@ std::string WriteHandler::inputUsername()
 
 void WriteHandler::sendToServer(const std::string& message)
 {
-	size_t bytesSent = write(mSocketFd, message.c_str(), message.size());
+	// 서버의 공개키를 이용해 메시지를 암호화할 MyRSA 객체 생성
+	MyRSA rsa("server_public.pem");
+
+	// 암호화된 메시지를 저장할 버퍼
+	unsigned char encrypted[256];  
+	size_t encrypted_len = 0;
+
+	// 메시지를 RSA 공개키로 암호화
+	rsa.encrypt((unsigned char*)message.c_str(), encrypted, encrypted_len);
+
+	// 암호화된 메시지를 서버로 전송
+	size_t bytesSent = write(mSocketFd, encrypted, encrypted_len);
 	if (bytesSent < 0)
 	{
 		std::cerr << "서버로 데이터 전송 실패" << std::endl;
