@@ -1,6 +1,9 @@
 #include "Session.h"
 #include "SessionManager.h"
 #include "CommandManager.h"
+
+#include "CipherManager.h"
+
 #include <iostream>
 #include <unistd.h>
 #include <sys/socket.h>

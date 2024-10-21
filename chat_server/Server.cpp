@@ -2,6 +2,9 @@
 #include "CommandManager.h"
 #include "SessionManager.h"
 #include "Session.h"
+
+#include "CipherManager.h"
+
 #include <iostream>
 #include <arpa/inet.h>
 #include <unistd.h>
@@ -59,6 +62,25 @@ void Server::start() {
 
 void Server::running() {
 
+    unsigned char encrypted[256];
+    unsigned char decrypted[256];
+    size_t encrypted_len = 0, decrypted_len = 0;
+
+    EVP_PKEY* keypair = CipherManager::create_RSA_keypair();
+
+    CipherManager::save_keys(keypair);
+
+    // 공개 키를 PEM 형식으로 직렬화
+    BIO* bio = BIO_new(BIO_s_mem());
+    PEM_write_bio_PUBKEY(bio, keypair);
+
+    // PEM 데이터를 메모리에 저장
+    char* pem_key = nullptr;
+    long pem_len = BIO_get_mem_data(bio, &pem_key);
+
+    // 자원 해제
+    BIO_free(bio);
+
     while (true) {
 		sockaddr_in clientAddr{};
     	socklen_t clientAddrLen = sizeof(clientAddr);
@@ -73,10 +95,13 @@ void Server::running() {
         inet_ntop(AF_INET, &clientAddr.sin_addr, clientIP, sizeof(clientIP));
         std::cout << "클라이언트 IP: " << clientIP << ", 소켓 연결: " << socketFd << std::endl;
 
+        // 클라이언트에게 공개 키 전송
+        if (send(mServerSocketFd, pem_key, pem_len, 0) == -1) {
+            perror("send");
+        }
 
 		Session* session = new Session(socketFd, mCommandManager, mSessionManager);
 
-        
         /*
 		std::thread sessionThread([session]() {
 			std::cout  << "새로운 스레드 시작. 스레드 ID: " << std::this_thread::get_id() << std::endl;
