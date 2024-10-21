@@ -73,8 +73,9 @@ void Session::run()
             rsa.decrypt((unsigned char*)buffer, bytesReceived, decrypted, decrypted_len);
 
 		    // 복호화된 메시지를 출력
-		    std::cout << "Received (decrypted): " << std::string((char*)decrypted, decrypted_len) << std::endl;
-			mCommandManager->execute(received, *this);
+			std::string decryptedMessage = std::string((char*)decrypted, decrypted_len);
+		    std::cout << "Received (decrypted): " << decryptedMessage << std::endl;
+			mCommandManager->execute(decryptedMessage, *this);
         }
     } 
 	catch (const std::exception& e) 
@@ -94,6 +95,7 @@ void Session::run()
 
 void Session::send(const std::string& message)
 {
+	std::cout << "Session::send() 시작" << std::endl;
     std::cout << "server -> client: " << message << " (size: " << message.size() << ")" << std::endl;
     std::cout << "mSocketFd:  " << mSocketFd << std::endl;
 
