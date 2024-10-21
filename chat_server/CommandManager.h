@@ -1,3 +1,6 @@
+#ifndef COMMNAD_MANAGER_H
+#define COMMNAD_MANAGER_H
+
 #include <string>
 #include <unordered_map>
 
@@ -18,3 +21,5 @@ private:
 	std::unordered_map<std::string, ICommandable*> mCommands;
 	ICommandable* mDefaultCommand;
 };
+
+#endif /* COMMNAD_MANAGER_H */
