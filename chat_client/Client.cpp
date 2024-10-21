@@ -1,3 +1,5 @@
+#include "MyRSA.h"
+
 #include "Client.h"
 #include "ReadHandler.h"
 #include "WriteHandler.h"
@@ -47,6 +49,66 @@ void Client::start()
 		return;
 	}
 	std::cout << "서버 연결 성공" << std::endl;
+
+
+
+
+
+	// 서버의 공개키 받기, 파일로 저장(server_public.pem)
+	char server_pubkey_buffer[4096];
+    int received = recv(mSocketFd, server_pubkey_buffer, sizeof(server_pubkey_buffer), 0);
+    if (received < 0)
+    {
+        std::cerr << "서버 공개키 수신 실패" << std::endl;
+        return;
+    }
+    std::cout << "서버 공개키 수신 성공" << std::endl;
+
+	// 서버의 MyRsa 공개 키 불러오기
+    FILE* pub_file = fopen("server_public.pem", "w");
+	size_t written = fwrite(server_pubkey_buffer, 1, received, pub_file);
+	EVP_PKEY* server_pub_key = PEM_read_PUBKEY(pub_file, NULL, NULL, NULL);
+	if (written != received)
+	{
+		std::cerr << "서버 공개키 파일 쓰기 실패" << std::endl;
+		fclose(pub_file);
+		return;
+	}
+	std::cout << "서버 공개키 파일 저장 성공" << std::endl;
+	fclose(pub_file);
+
+
+	// 클라이언트의 키페어 생성
+	EVP_PKEY* keypair = MyRSA::create_RSA_keypair();
+	MyRSA::save_keys(keypair);
+
+	// 클라이언트의 공개키를 서버에 전송
+	FILE* pub_file_client = fopen("public.pem", "r");
+	if (!pub_file_client) {
+		std::cerr << "클라이언트 공개키 파일 열기 실패" << std::endl;
+		return;
+	}
+	fseek(pub_file_client, 0, SEEK_END);
+	long pub_key_size = ftell(pub_file_client);
+	rewind(pub_file_client);
+
+	char* client_pubkey_buffer = new char[pub_key_size];
+	fread(client_pubkey_buffer, 1, pub_key_size, pub_file_client);
+	fclose(pub_file_client);
+
+	if (send(mSocketFd, client_pubkey_buffer, pub_key_size, 0) < 0) {
+		std::cerr << "클라이언트 공개키 전송 실패" << std::endl;
+		delete[] client_pubkey_buffer;
+		return;
+	}
+	std::cout << "클라이언트 공개키 전송 성공" << std::endl;
+
+	delete[] client_pubkey_buffer;
+
+
+
+
+
 
 	// read 스레드
 	ReadHandler readHandler(mSocketFd, *this);
