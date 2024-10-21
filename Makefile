@@ -2,14 +2,14 @@ client :
 	clang++ chat_client/*.cpp -o chat_client/chat_client.out -lssl -lcrypto
 
 run-client : client
-	./chat_client/chat_client.out
+	cd chat_client && ./chat_client.out
 
 
 server :
 	clang++ -I chat_server chat_server/*.cpp chat_server/command/*.cpp -o chat_server/chat_server.out -lssl -lcrypto
 
 run-server: server
-	./chat_server/chat_server.out
+	cd chat_server && ./chat_server.out
 
 
 clean:
