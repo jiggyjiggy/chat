@@ -103,3 +103,10 @@
 
 요약<br>
 이 모든 패킷들은 TCP의 연결 설정, 데이터 전송, 연결 종료의 과정에서 발생합니다. 각 단계는 서로의 상태를 확인하고, 데이터의 신뢰성을 보장하기 위한 것입니다. 3-way handshake를 통해 연결이 설정되고, 데이터 전송 후 4-way handshake를 통해 연결이 종료되는 과정을 포함하고 있습니다. 암호화된 통신에서는 데이터가 실제로 암호화되어 전송되기 때문에 패킷 내용은 확인할 수 없지만, 패킷의 길이와 플래그를 통해 어떤 데이터가 전송되었는지 유추할 수 있습니다.
+
+
+---
+
+# 도움이 되는 자료
+## 3-Way Handshake & 4-Way Handshake
+https://velog.io/@averycode/%EB%84%A4%ED%8A%B8%EC%9B%8C%ED%81%AC-TCPUDP%EC%99%80-3-Way-Handshake4-Way-Handshake
