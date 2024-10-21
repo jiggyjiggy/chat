@@ -2,16 +2,31 @@
 #include <openssl/err.h>
 #include <stdexcept>
 
-MyRSA::MyRSA(const std::string& public_key_file) {
-    FILE* pub_file = fopen(public_key_file.c_str(), "r");
-    if (!pub_file) {
-        throw std::runtime_error("Unable to open public key file");
+MyRSA::MyRSA(const std::string& key_file, KEY_TYPE key_type) {
+    FILE* key_file_ptr = fopen(key_file.c_str(), "r");
+    if (!key_file_ptr) {
+        throw std::runtime_error("Unable to open key file");
     }
-    mRsaKey = PEM_read_PUBKEY(pub_file, NULL, NULL, NULL);
-    fclose(pub_file);
-    if (!mRsaKey) {
-        throw std::runtime_error("Unable to read public key");
+    
+    if (key_type == PRIVATE_KEY) {
+        // RSA 개인 키 불러오기
+        mRsaKey = PEM_read_PrivateKey(key_file_ptr, NULL, NULL, NULL);
+        if (!mRsaKey) {
+            fclose(key_file_ptr);
+            ERR_print_errors_fp(stderr);  // OpenSSL 오류 출력
+            throw std::runtime_error("Unable to read private key");
+        }
+    } else {
+        // RSA 공개 키 불러오기
+        mRsaKey = PEM_read_PUBKEY(key_file_ptr, NULL, NULL, NULL);
+        if (!mRsaKey) {
+            fclose(key_file_ptr);
+            ERR_print_errors_fp(stderr);  // OpenSSL 오류 출력
+            throw std::runtime_error("Unable to read public key");
+        }
     }
+    
+    fclose(key_file_ptr);
 }
 
 MyRSA::~MyRSA() {

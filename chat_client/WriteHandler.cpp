@@ -64,7 +64,8 @@ std::string WriteHandler::inputUsername()
 void WriteHandler::sendToServer(const std::string& message)
 {
 	// 서버의 공개키를 이용해 메시지를 암호화할 MyRSA 객체 생성
-	MyRSA rsa("server_public.pem");
+	MyRSA rsa("server_public.pem", PUBLIC_KEY);
+	std::cout << "after MyRSA rsa(server_public.pem);" << std::endl;
 
 	// 암호화된 메시지를 저장할 버퍼
 	unsigned char encrypted[256];  
