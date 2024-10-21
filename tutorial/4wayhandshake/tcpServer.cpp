@@ -75,6 +75,6 @@ int main() {
     close(client_socket);
     std::cout << "서버: 소켓 종료" << std::endl;
 
-    close(server_fd);
+    close(server_fd); // 서버 프로세스의 소켓
     return 0;
 }
