@@ -2,7 +2,7 @@
 #include "SessionManager.h"
 #include "CommandManager.h"
 
-#include "CipherManager.h"
+#include "MyRSA.h"
 
 #include <iostream>
 #include <unistd.h>
@@ -17,11 +17,22 @@ Session::Session(int socketFd, CommandManager& commandManager, SessionManager& s
 	, mSessionManager(&sessionManager)
 	, mbClosed(false)
 {
+    if(recv(socketFd, pem_key, pem_len, 0) == -1)
+    {
+        perror("recv");
+    }
+    // 서버의 MyRsa 공개 키 불러오기i
+    string client_Pubkey = string(socketFd) + "_public.pem"
+    FILE* pub_file = fopen(client_Pubkey, "w");
+    size_t written = fwrite(client_pubkey_buffer, 1, received, pub_file);
+    EVP_PKEY* client_pub_key = PEM_read_PUBKEY(pub_file, NULL, NULL, NULL);
+
 	mSessionManager->add(this);
-}
+
 
 Session::~Session()
 {
+    // EVP_PKEY_free(bub_file);
 	close();
 }
 
@@ -45,8 +56,22 @@ void Session::run()
                 break;
             }
 		
+
+
+
 			std::string received(buffer, bytesReceived);
 			std::cout << "client -> server: " << received << ", 소켓 FD: " << mSocketFd << std::endl;
+
+            MyRSA rsa("private.pem");  // 클라이언트의 개인키를 로드
+			// 암호화된 데이터를 복호화할 버퍼
+            unsigned char decrypted[1024];  
+            size_t decrypted_len = 0;
+
+            // 복호화 실행
+            rsa.decrypt((unsigned char*)buffer, bytesReceived, decrypted, decrypted_len);
+
+		    // 복호화된 메시지를 출력
+		    std::cout << "Received (decrypted): " << std::string((char*)decrypted, decrypted_len) << std::endl;
 			mCommandManager->execute(received, *this);
         }
     } 
@@ -70,7 +95,19 @@ void Session::send(const std::string& message)
     std::cout << "server -> client: " << message << " (size: " << message.size() << ")" << std::endl;
     std::cout << "mSocketFd:  " << mSocketFd << std::endl;
 
-    if (::send(mSocketFd, message.c_str(), message.size(), 0) == -1) 
+    // 서버의 공개키를 이용해 메시지를 암호화할 MyRSA 객체 생성
+    string client_Pubkey = string(socketFd) + "_public.pem"
+	MyRSA rsa(client_Pubkey);
+
+	// 암호화된 메시지를 저장할 버퍼
+	unsigned char encrypted[256];  
+	size_t encrypted_len = 0;
+
+	// 메시지를 RSA 공개키로 암호화
+	rsa.encrypt((unsigned char*)message.c_str(), encrypted, encrypted_len);
+
+	// 암호화된 메시지를 서버로 전송
+    if (::send(mSocketFd, encrypted, encrypted_len), 0) == -1) 
 	{
         throw std::runtime_error("Error sending message");
     }
