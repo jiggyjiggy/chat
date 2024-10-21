@@ -107,6 +107,16 @@
 
 ---
 
-# 도움이 되는 자료
-## 3-Way Handshake & 4-Way Handshake
+### 3-Way Handshake & 4-Way Handshake
 https://velog.io/@averycode/%EB%84%A4%ED%8A%B8%EC%9B%8C%ED%81%AC-TCPUDP%EC%99%80-3-Way-Handshake4-Way-Handshake
+
+---
+---
+
+# 하이브리드 암호 시스템의 암호화, 복호화 과정
+
+## 암호화
+<img src="https://github.com/user-attachments/assets/b675a1a0-76ca-4c95-ac71-243be0db71ec" alt="하이브리드 암호 시스템의 암호화 과정" width="50%" />
+
+## 복호화
+<img src="https://github.com/user-attachments/assets/e2bedcd5-8584-425c-9dd9-4f1e835a2025" alt="하이브리드 암호 시스템의 복호화 과정" width="50%" />
