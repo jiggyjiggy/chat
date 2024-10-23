@@ -11,6 +11,8 @@ public:
 	void start();
 	void close();
 
+	bool isClosed();
+	
 private:
 	std::string mHost;
 	int mPort;

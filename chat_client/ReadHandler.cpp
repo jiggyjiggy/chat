@@ -7,14 +7,13 @@
 ReadHandler::ReadHandler(int socketFd, Client& client)
 	: mSocketFd(socketFd)
 	, mClient(client)
-	, mbClosed(false)
 {
 }
 
 void ReadHandler::run()
 {
 	char buffer[1024];
-	while (mbClosed == false)
+	while (mClient.isClosed() == false)
 	{
 		std::cout << "ReadHandler::run() mSocketFd : " << mSocketFd << std::endl;
 		size_t bytesReceived = read(mSocketFd, buffer, sizeof(buffer));

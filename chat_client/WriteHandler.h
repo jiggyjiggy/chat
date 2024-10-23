@@ -19,7 +19,6 @@ private:
 
 	int mSocketFd;
 	Client& mClient;
-	bool mbClosed;
 };
 
 #endif /* WRITE_HANDLER_H */
