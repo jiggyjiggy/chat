@@ -6,7 +6,6 @@
 WriteHandler::WriteHandler(int socketFd, Client& client)
 	: mSocketFd(socketFd)
 	, mClient(client)
-	, mbClosed(false)
 {
 }
 
@@ -17,7 +16,7 @@ void WriteHandler::run()
 	sendToServer("/join" + DELIMITER + username);
 
 	std::string toSend;
-	while (mbClosed == false)
+	while (mClient.isClosed() == false)
 	{
 		std::cout << "WriteHandler::run() mSocketFd : " << mSocketFd << std::endl;
 
@@ -46,6 +45,7 @@ void WriteHandler::run()
 	}
 
 	mClient.close();
+	std::cout << "WriteHandler::run() 종료" << std::endl;
 }
 
 std::string WriteHandler::inputUsername()
