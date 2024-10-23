@@ -14,7 +14,7 @@ public:
 private:
 	int mSocketFd;
 	Client& mClient;
-	bool mbClosed;
+	// bool& mbClosed;
 };
 
 #endif /* READ_HANDLER_H */

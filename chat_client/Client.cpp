@@ -75,3 +75,8 @@ void Client::close()
 	// 소켓 닫기
 	::close(mSocketFd);
 }
+
+bool Client::isClosed()
+{
+	return mbClosed;
+}
