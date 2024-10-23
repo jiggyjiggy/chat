@@ -1,7 +1,7 @@
 #!/bin/bash
 
 PATH_MAKE=$(pwd)
-PATH_PROJECT=$PATH_MAKE
+PATH_PROJECT=..
 PATH_SERVER="$PATH_PROJECT/chat_server/chat_server.out"
 PATH_CLIENT="$PATH_PROJECT/chat_client/Client_test.out"
 
