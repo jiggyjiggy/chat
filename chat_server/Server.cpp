@@ -14,7 +14,7 @@ Server::Server(int port, CommandManager& commandManager, SessionManager& session
 	, mCommandManager(commandManager)
 	, mSessionManager(sessionManager)
 	, mServerSocketFd(-1)
-    , mPool(5)
+    , mPool(MAX_SESSION_COUNT)
 {
 }
 
@@ -44,7 +44,7 @@ void Server::start() {
 	std::cout << "bind 성공" << std::endl;
 
 	// listen
-	if (listen(mServerSocketFd, 3) == -1) 
+	if (listen(mServerSocketFd, 0) == -1) 
 	{
         std::cerr << "listen 실패: " << strerror(errno) << std::endl;
         close(mServerSocketFd);
@@ -73,6 +73,14 @@ void Server::running() {
         inet_ntop(AF_INET, &clientAddr.sin_addr, clientIP, sizeof(clientIP));
         std::cout << "클라이언트 IP: " << clientIP << ", 소켓 연결: " << socketFd << std::endl;
 
+        std::cout << "현재 세션 수 / 최대 세션 수: " << mSessionManager.getSessionCount() << "/" << MAX_SESSION_COUNT << ", 소켓 연결: " << socketFd << std::endl;
+		if (mSessionManager.getSessionCount() >= MAX_SESSION_COUNT)
+		{
+			close(socketFd);
+			std::cout << "[입장 불가 : 인원제한], 클라이언트 IP: " << clientIP << ", 소켓 종료: " << socketFd << std::endl;
+
+			continue;
+		}
 
 		Session* session = new Session(socketFd, mCommandManager, mSessionManager);
 

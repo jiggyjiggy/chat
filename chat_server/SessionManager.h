@@ -8,6 +8,8 @@
 
 class Session;
 
+const unsigned int MAX_SESSION_COUNT = 2;
+
 class SessionManager
 {
 public:	
@@ -17,6 +19,8 @@ public:
 	void closeAll();
 	void sendAll(const std::string& message) const;
 	std::vector<std::string> getAllUsername() const;
+
+	unsigned int getSessionCount() const;
 
 private:
 	std::vector<Session*> mSessions;

@@ -55,3 +55,7 @@ std::vector<std::string> SessionManager::getAllUsername() const
     return usernames;
 }
 
+unsigned int SessionManager::getSessionCount() const
+{
+	return mSessions.size();
+}
